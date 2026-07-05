@@ -1,0 +1,60 @@
+{
+  "name": "age-vault",
+  "version": "0.1.0",
+  "description": "Passphrase-based file encryption CLI built on age — encrypt, decrypt, and inspect sensitive files",
+  "author": "Eeshan Srivastava (https://eeshans.com)",
+  "type": "module",
+  "bin": {
+    "age-vault": "bin/age-vault.mjs"
+  },
+  "files": [
+    "bin/*.mjs",
+    "src/*.mjs",
+    "src/commands/*.mjs",
+    "install.sh"
+  ],
+  "publishConfig": {
+    "access": "public"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/eeshansrivastava89/age-vault.git"
+  },
+  "homepage": "https://github.com/eeshansrivastava89/age-vault#readme",
+  "bugs": {
+    "url": "https://github.com/eeshansrivastava89/age-vault/issues"
+  },
+  "engines": {
+    "node": ">=20"
+  },
+  "scripts": {
+    "start": "node bin/age-vault.mjs",
+    "test": "node --test test/*.mjs",
+    "lint": "eslint src/*.mjs src/commands/*.mjs scripts/*.mjs bin/*.mjs",
+    "check:privacy": "node scripts/privacy-gate.mjs",
+    "release:check": "bash scripts/release-check.sh",
+    "release:check:fast": "bash scripts/release-check.sh --skip-install --skip-manual",
+    "prepack": "npm run check:privacy",
+    "pretest": "npm run lint"
+  },
+  "dependencies": {
+    "@inquirer/prompts": "^8.5.2",
+    "age-encryption": "^0.3.0",
+    "picocolors": "^1.1.0"
+  },
+  "keywords": [
+    "age",
+    "encryption",
+    "cli",
+    "passphrase",
+    "security",
+    "vault",
+    "secrets"
+  ],
+  "license": "MIT",
+  "devDependencies": {
+    "@eslint/js": "^10.0.1",
+    "eslint": "^10.4.1",
+    "globals": "^17.6.0"
+  }
+}

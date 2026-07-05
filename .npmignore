@@ -1,0 +1,14 @@
+# Dev/plan files
+PLAN.md
+Dockerfile
+.dockerignore
+
+# Internal config
+.pi/
+
+# Test files
+test/
+
+# Source control
+.git/
+.gitignore
