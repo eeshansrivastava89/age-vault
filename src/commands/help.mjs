@@ -2,6 +2,7 @@ import { pc, renderCard, renderRows } from "../ui.mjs";
 import { packageVersion } from "../files.mjs";
 
 export function printHelp() {
+  console.log();
   console.log(renderCard("age-vault", renderRows([
     ["What it is", "Passphrase-based file encryption built on age"],
     ["Encrypt", pc.bold("age-vault -e <file>")],
@@ -23,6 +24,7 @@ export function printHelp() {
   console.log();
   console.log(pc.dim("Files use the standard age format. They can be decrypted with age-vault,"));
   console.log(pc.dim("the age CLI (https://github.com/FiloSottile/age), or any age-compatible tool."));
+  console.log();
 }
 
 export function printVersion() {

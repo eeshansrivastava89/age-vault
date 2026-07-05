@@ -74,8 +74,8 @@ export function renderCard(title, body, options = {}) {
     visibleLen(titleStr),
     ...rawLines.map(visibleLen),
   );
-  const contentWidth = Math.min(innerWidth, maxCols - 4);
-  const width = contentWidth + 2;
+  const contentWidth = Math.min(innerWidth, maxCols - 2);
+  const lineWidth = contentWidth + 1;
 
   const lines = [];
   for (const line of rawLines) {
@@ -86,11 +86,13 @@ export function renderCard(title, body, options = {}) {
     }
   }
 
-  const topTitle = title ? `╭${pc.reset(titleStr)}` : "╭";
-  const topFill = "─".repeat(Math.max(0, width + 2 - visibleLen(titleStr)));
-  const top = `${topTitle}${topFill}╮`;
-  const middle = lines.map((line) => `│ ${padVisible(line, contentWidth)} │`);
-  const bottom = `╰${"─".repeat(width + 2)}╯`;
+  // Top line: ─ Title ──────
+  const topFill = "─".repeat(Math.max(0, lineWidth - 1 - visibleLen(titleStr)));
+  const top = title ? `─${titleStr}${topFill}` : "─".repeat(lineWidth);
+  // Content: leading space, no vertical edges
+  const middle = lines.map((line) => ` ${padVisible(line, contentWidth)}`);
+  // Bottom line
+  const bottom = "─".repeat(lineWidth);
 
   return [top, ...middle, bottom].map((l) => borderColor(l)).join("\n");
 }
