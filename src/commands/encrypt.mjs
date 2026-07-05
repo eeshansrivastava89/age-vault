@@ -1,4 +1,4 @@
-import { pc, promptPassword, parseOptions, formatBytes } from "../ui.mjs";
+import { pc, promptPassword, promptYesNo, parseOptions, formatBytes, renderCard } from "../ui.mjs";
 import { encrypt, encryptArmored } from "../age.mjs";
 import {
   resolvePath,
@@ -29,6 +29,10 @@ export async function encryptCommand(argv) {
   const armor = Boolean(options.armor);
   const keep = Boolean(options.keep);
 
+  console.log();
+  console.log(renderCard("Remember your passphrase", pc.red("If you lose it, this file cannot be recovered — there is no reset."), { formatBorder: pc.red }));
+  console.log();
+
   const passphrase = await promptPassword("Enter passphrase", { confirm: true });
 
   const plaintext = readFileBytes(input);
@@ -46,11 +50,17 @@ export async function encryptCommand(argv) {
   if (keep) {
     console.log(pc.yellow("  Kept plaintext (--keep)"));
   } else {
-    removeFile(input);
-    console.log(pc.green("✓") + ` Removed plaintext ${relativePath(input)}`);
+    const shouldDelete = await promptYesNo(`Delete the original ${relativePath(input)}?`, true);
+    if (shouldDelete) {
+      removeFile(input);
+      console.log(pc.green("✓") + ` Removed plaintext ${relativePath(input)}`);
+      console.log(pc.dim(`\n  Decrypt with: age-vault -d ${relativePath(outPath)}`));
+    } else {
+      console.log(pc.yellow("  Kept plaintext — both files exist"));
+    }
   }
 
-  if (!keep) {
+  if (keep) {
     console.log(pc.dim(`\n  Decrypt with: age-vault -d ${relativePath(outPath)}`));
   }
 }

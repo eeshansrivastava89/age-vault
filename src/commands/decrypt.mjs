@@ -1,4 +1,4 @@
-import { pc, promptPassword, parseOptions, formatBytes } from "../ui.mjs";
+import { pc, promptPassword, promptYesNo, parseOptions, formatBytes } from "../ui.mjs";
 import { decrypt, decryptArmored, isEncrypted } from "../age.mjs";
 import {
   resolvePath,
@@ -48,7 +48,7 @@ export async function decryptCommand(argv) {
   if (existsSync(outPath) && !force) {
     throw new Error(`Output file exists: ${relativePath(outPath)}. Use --force to overwrite.`);
   }
-  writeFileBytes(outPath, Buffer.from(plaintext, "utf-8"));
+  writeFileBytes(outPath, Buffer.from(plaintext));
 
   const inSize = fileSize(input);
   const outSize = fileSize(outPath);
@@ -60,8 +60,13 @@ export async function decryptCommand(argv) {
   if (keep) {
     console.log(pc.yellow("  Kept ciphertext (--keep)"));
   } else {
-    removeFile(input);
-    console.log(pc.green("✓") + ` Removed ciphertext ${relativePath(input)}`);
+    const shouldDelete = await promptYesNo(`Delete the ciphertext ${relativePath(input)}?`, true);
+    if (shouldDelete) {
+      removeFile(input);
+      console.log(pc.green("✓") + ` Removed ciphertext ${relativePath(input)}`);
+    } else {
+      console.log(pc.yellow("  Kept ciphertext — both files exist"));
+    }
   }
 
   console.log(pc.dim(`\n  Re-encrypt with: age-vault -e ${relativePath(outPath)}`));

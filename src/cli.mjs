@@ -67,6 +67,7 @@ export async function run(argv) {
   if (command === "-e" || command === "encrypt") return encryptCommand(argv.slice(1));
   if (command === "-d" || command === "decrypt") return decryptCommand(argv.slice(1));
   if (command === "-l" || command === "list") return listCommand(argv.slice(1));
+  if (command === "-ls") return listCommand(["--status", ...argv.slice(1)]);
 
   throw new Error(`Unknown command: ${command}. Run age-vault --help`);
 }

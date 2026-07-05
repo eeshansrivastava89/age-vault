@@ -35,8 +35,8 @@ age-vault -d notes.md.age
 age-vault -l
 
 # Show vault status — counts, tree, unencrypted warnings
-age-vault -l --status
-age-vault -l --status path/to/vault
+age-vault -ls
+age-vault -ls path/to/vault
 ```
 
 ### Flags
@@ -59,7 +59,7 @@ Confirm passphrase: ********
   Output: tax-2026.md.age
 ✓ Removed plaintext tax-2026.md
 
-$ age-vault -l --status
+$ age-vault -ls
   ╭ Vault Status ──────────────────────────────╮
   │ Directory      .                            │
   │ Total files    1                            │

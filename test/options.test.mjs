@@ -14,10 +14,10 @@ describe("parseOptions", () => {
     assert.equal(options.armor, "true");
   });
 
-  it("parses long flags with next-arg value", () => {
+  it("treats long flags as boolean (does not consume next arg)", () => {
     const { options, positional } = parseOptions(["--keep", "file.txt"]);
-    assert.equal(options.keep, "file.txt");
-    assert.deepEqual(positional, []);
+    assert.equal(options.keep, true);
+    assert.deepEqual(positional, ["file.txt"]);
   });
 
   it("parses boolean long flags", () => {

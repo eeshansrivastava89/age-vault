@@ -164,9 +164,7 @@ export function parseOptions(argv) {
     }
     if (item.startsWith("--")) {
       const [key, inlineValue] = item.slice(2).split(/=(.*)/u, 2);
-      const next = argv[i + 1];
       if (inlineValue !== undefined) options[key] = inlineValue;
-      else if (next && !next.startsWith("-")) { options[key] = next; i += 1; }
       else options[key] = true;
     } else if (/^-[A-Za-z]+$/u.test(item)) {
       for (const key of item.slice(1)) options[key] = true;

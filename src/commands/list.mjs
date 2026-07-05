@@ -8,8 +8,8 @@ import { existsSync, statSync } from "node:fs";
  * Usage:
  *   age-vault -l                  → list encrypted files under cwd
  *   age-vault -l <dir>            → list encrypted files under <dir>
- *   age-vault -l --status         → vault status summary (counts, tree)
- *   age-vault -l --status <dir>   → vault status for <dir>
+ *   age-vault -ls                → vault status summary (counts, tree)
+ *   age-vault -ls <dir>          → vault status for <dir>
  */
 export async function listCommand(argv) {
   const { positional, options } = parseOptions(argv);
@@ -80,7 +80,7 @@ async function vaultStatus(dir) {
   console.log(pc.cyan("File tree"));
   console.log();
   const tree = buildTree(dir, encrypted, plaintext);
-  printTree(tree, "", true);
+  printTree(tree, "", true, true);
   console.log();
 
   if (plaintext.length > 0) {
@@ -124,13 +124,14 @@ function buildTree(root, encrypted, plaintext) {
   return tree;
 }
 
-function printTree(node, prefix, isLast) {
-  if (node.name !== "." || prefix === "") {
-    const branch = prefix === "" ? "" : (isLast ? "└── " : "├── ");
-    const dirChar = prefix === "" ? "" : "📁 ";
-    console.log(`${prefix}${branch}${dirChar}${pc.bold(node.name)}/`);
+function printTree(node, prefix, isLast, isRoot = false) {
+  if (isRoot) {
+    console.log(pc.bold(node.name) + "/");
+  } else {
+    const branch = isLast ? "└── " : "├── ";
+    console.log(`${prefix}${branch}📁 ${pc.bold(node.name)}/`);
   }
-  const childPrefix = prefix === "" ? "" : (isLast ? "    " : "│   ");
+  const childPrefix = isRoot ? "" : prefix + (isLast ? "    " : "│   ");
 
   const childDirs = [...node.children.values()].sort((a, b) => a.name.localeCompare(b.name));
   const allChildren = [...childDirs];
@@ -145,7 +146,7 @@ function printTree(node, prefix, isLast) {
       const color = child.encrypted ? pc.green : pc.yellow;
       console.log(`${childPrefix}${branch}${icon} ${color(child.name)} ${pc.dim(formatBytes(child.size))}`);
     } else {
-      printTree(child, childPrefix, last);
+      printTree(child, childPrefix, last, false);
     }
   });
 }

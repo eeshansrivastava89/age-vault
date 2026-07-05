@@ -1,6 +1,6 @@
 {
   "name": "age-vault",
-  "version": "0.1.0",
+  "version": "0.2.0",
   "description": "Passphrase-based file encryption CLI built on age — encrypt, decrypt, and inspect sensitive files",
   "author": "Eeshan Srivastava (https://eeshans.com)",
   "type": "module",

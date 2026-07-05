@@ -128,5 +128,5 @@ export function resolvePath(input) {
 }
 
 export function relativePath(path) {
-  return relative(process.cwd(), path) || path;
+  return relative(process.cwd(), path) || ".";
 }

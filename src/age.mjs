@@ -13,12 +13,12 @@ const ARMOR_HEADER = "-----BEGIN AGE ENCRYPTED FILE-----";
  */
 export function isEncrypted(data) {
   if (!data) return false;
-  if (Buffer.isBuffer(data)) {
-    if (data.length < AGE_HEADER.length) return false;
-    return data.subarray(0, AGE_HEADER.length).equals(AGE_HEADER);
-  }
-  const str = String(data).trimStart();
-  return str.startsWith(ARMOR_HEADER) || str.startsWith("age-encryption.org/v1");
+  const buf = Buffer.isBuffer(data) ? data : Buffer.from(data);
+  // Binary age format: starts with raw bytes "age-encryption.org/v1"
+  if (buf.length >= AGE_HEADER.length && buf.subarray(0, AGE_HEADER.length).equals(AGE_HEADER)) return true;
+  // ASCII-armored format: starts with "-----BEGIN AGE ENCRYPTED FILE-----"
+  const head = buf.subarray(0, ARMOR_HEADER.length).toString("utf-8");
+  return head === ARMOR_HEADER;
 }
 
 /**
@@ -43,7 +43,7 @@ export async function encrypt(plaintext, passphrase) {
 export async function decrypt(ciphertext, passphrase) {
   const d = new Decrypter();
   d.addPassphrase(passphrase);
-  return d.decrypt(ciphertext, "text");
+  return d.decrypt(ciphertext, "uint8array");
 }
 
 /**

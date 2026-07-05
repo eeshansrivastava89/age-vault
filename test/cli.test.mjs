@@ -63,4 +63,19 @@ describe("CLI smoke tests", () => {
       /Unknown command/,
     );
   });
+
+  it("routes -ls to vault status", async () => {
+    const { run } = await import("../src/cli.mjs");
+    const origLog = console.log;
+    let output = "";
+    console.log = (...args) => { output += args.join(" ") + "\n"; };
+    try {
+      // Create a file so the directory isn't empty
+      writeFileSync(join(tmpDir, "test.txt"), "hello");
+      await run(["-ls", tmpDir]);
+      assert.ok(output.includes("Vault Status"));
+    } finally {
+      console.log = origLog;
+    }
+  });
 });

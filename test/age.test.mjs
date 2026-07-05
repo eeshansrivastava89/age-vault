@@ -9,16 +9,14 @@ describe("age crypto round-trip", () => {
     assert.ok(Buffer.from(ct).length > 0, "ciphertext should not be empty");
     assert.ok(isEncrypted(Buffer.from(ct)), "ciphertext should be detected as age-encrypted");
     const pt = await decrypt(ct, "test-pass");
-    assert.equal(pt, "hello age");
+    assert.equal(Buffer.from(pt).toString("utf-8"), "hello age");
   });
 
   it("encrypts and decrypts binary data", async () => {
     const data = Buffer.from([0x00, 0x01, 0x02, 0xff, 0xfe, 0xfd]);
     const ct = await encrypt(data, "bin-pass");
     const pt = await decrypt(ct, "bin-pass");
-    // decrypt returns text (utf-8); round-trip via base64 for binary safety
-    const decoded = Buffer.from(pt, "utf-8");
-    assert.ok(decoded.includes(data.subarray(0, 3)), "binary round-trip should preserve initial bytes");
+    assert.deepEqual(Buffer.from(pt), data, "binary round-trip should preserve all bytes");
   });
 
   it("fails with wrong passphrase", async () => {
@@ -35,7 +33,7 @@ describe("age crypto round-trip", () => {
     assert.equal(typeof armored, "string");
     assert.ok(armored.startsWith("-----BEGIN AGE ENCRYPTED FILE-----"));
     const pt = await decryptArmored(armored, "pass");
-    assert.equal(pt, plaintext);
+    assert.equal(Buffer.from(pt).toString("utf-8"), plaintext);
   });
 });
 
@@ -48,6 +46,8 @@ describe("isEncrypted detection", () => {
   it("detects armored age header", async () => {
     const armored = await encryptArmored("x", "p");
     assert.equal(isEncrypted(armored), true);
+    // Buffer input (what readFileBytes returns) — this was the bug
+    assert.equal(isEncrypted(Buffer.from(armored, "utf-8")), true);
   });
 
   it("returns false for plaintext", () => {
